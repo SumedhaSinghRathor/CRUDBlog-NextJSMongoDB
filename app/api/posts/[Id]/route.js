@@ -7,12 +7,13 @@ export async function GET(request, { params }) {
   await connectDB();
 
   try {
-    const post = await Post.findByid(id);
-    return new NextResponse(JSON.stringify({ post }));
+    const post = await Post.findById(id);
+    if (!post) {
+      return NextResponse.json({ message: "Post not found" }, { status: 404 });
+    }
+    return NextResponse.json({ post });
   } catch (error) {
-    return new NextResponse(JSON.stringify({ message: error.message }), {
-      status: 500,
-    });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
 
@@ -23,11 +24,12 @@ export async function PUT(request, { params }) {
 
   try {
     const post = await Post.findByIdAndUpdate(id, data, { new: true });
-    return new NextResponse(JSON.stringify({ post }));
+    if (!post) {
+      return NextResponse.json({ message: "Post not found" }, { status: 404 });
+    }
+    return NextResponse.json({ post });
   } catch (error) {
-    return new NextResponse(JSON.stringify({ message: error.message }), {
-      status: 500,
-    });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
 
@@ -37,10 +39,11 @@ export async function DELETE(request, { params }) {
 
   try {
     const post = await Post.findByIdAndDelete(id);
-    return new NextResponse(JSON.stringify({ message: "Post deleted" }));
+    if (!post) {
+      return NextResponse.json({ message: "Post not found" }, { status: 404 });
+    }
+    return NextResponse.json({ message: "Post deleted" });
   } catch (error) {
-    return new NextResponse(JSON.stringify({ message: error.message }), {
-      status: 500,
-    });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
